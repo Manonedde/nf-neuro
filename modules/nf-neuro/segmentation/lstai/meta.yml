@@ -86,7 +86,7 @@ args:
       type: boolean
       description: If true, registration runs single-threaded. By default, LST-AI
         uses all CPUs allocated to the task.
-        default: false
+      default: false
 output:
   lesion_mask:
     - - meta:

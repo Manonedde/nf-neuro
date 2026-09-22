@@ -77,11 +77,6 @@ args:
         full ensemble, and without test-time augmentation. Faster, at some cost
         in mask quality.
       default: false
-  - probability_map:
-      type: boolean
-      description: If true, the lesion probability map is saved as an additional
-        output.
-      default: false
   - single_thread:
       type: boolean
       description: If true, registration runs single-threaded. By default, LST-AI

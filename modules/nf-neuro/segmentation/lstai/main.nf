@@ -11,11 +11,11 @@ process SEGMENTATION_LSTAI {
     tuple val(meta), path(t1), path(flair)
 
     output:
-    tuple val(meta), path("*_space-flair_seg-lst_mask_lesion.nii.gz")                        , emit: lesion_mask
-    tuple val(meta), path("*_desc-annotated_mask_lesion.nii.gz")         , emit: lesion_mask_annotated, optional: true
-    tuple val(meta), path("*_desc-lesion_stats.csv")                     , emit: lesion_stats, optional: true
-    tuple val(meta), path("*_desc-annotated_lesion_stats.csv")           , emit: lesion_stats_annotated, optional: true
-    path "versions.yml"                                                   , emit: versions
+    tuple val(meta), path("*_space-flair_seg-lst_lesion_mask.nii.gz")                   , emit: lesion_mask
+    tuple val(meta), path("*_space-flair_seg-lst_annotated_lesion_mask.nii.gz")         , emit: lesion_mask_annotated, optional: true
+    tuple val(meta), path("*_lesion_stats.csv")                                         , emit: lesion_stats, optional: true
+    tuple val(meta), path("*_annotated_lesion_stats.csv")                               , emit: lesion_stats_annotated, optional: true
+    path "versions.yml"                                                                 , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -30,7 +30,6 @@ process SEGMENTATION_LSTAI {
     def stripped = task.ext.skip_stripped ? "--stripped" : ""
     def segment_only = task.ext.segment_only ? "--segment_only" : ""
     def fast_mode = task.ext.fast_mode ? "--fast-mode" : ""
-    def probability_map = task.ext.probability_map ? "--probability_map" : ""
 
     """
     lst \
@@ -45,8 +44,7 @@ process SEGMENTATION_LSTAI {
         $threads \
         $stripped \
         $segment_only \
-        $fast_mode \
-        $probability_map
+        $fast_mode
 
     mv lst_output/space-flair_seg-lst.nii.gz ${prefix}_space-flair_seg-lst_lesion_mask.nii.gz
     mv lst_output/lesion_stats.csv ${prefix}_lesion_stats.csv
@@ -56,9 +54,6 @@ process SEGMENTATION_LSTAI {
         mv lst_output/annotated_lesion_stats.csv ${prefix}_annotated_lesion_stats.csv
     fi
 
-    if [[ -f lst_output/space-flair_desc-probability_map.nii.gz ]]; then
-        mv lst_output/space-flair_desc-probability_map.nii.gz ${prefix}_space-flair_seg-lst_desc-probability_map.nii.gz
-    fi
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -81,10 +76,10 @@ process SEGMENTATION_LSTAI {
 
     lst -h
 
-    touch ${prefix}__mask_lesion.nii.gz
-    touch ${prefix}__desc-annotated_mask_lesion.nii.gz
-    touch ${prefix}__lesion_stats.csv
-    touch ${prefix}__annotated_lesion_stats.csv
+    touch ${prefix}_space-flair_seg-lst_lesion_mask.nii.gz
+    touch ${prefix}_space-flair_seg-lst_annotated_lesion_mask.nii.gz
+    touch ${prefix}_lesion_stats.csv
+    touch ${prefix}_annotated_lesion_stats.csv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

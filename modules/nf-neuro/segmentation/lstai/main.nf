@@ -2,9 +2,9 @@ process SEGMENTATION_LSTAI {
     tag "$meta.id"
     label 'process_high'
 
-    container "${ task.ext.cpu ?
-        "jqmcginnis/lst-ai:v2.0.0rc1" :
-        "jqmcginnis/lst-ai:v2.0.0rc1-cpu"}"
+    container "${ task.ext.cpu == 'cpu' ?
+        "jqmcginnis/lst-ai:v2.0.0rc1-cpu" :
+        "jqmcginnis/lst-ai:v2.0.0rc1"}"
     containerOptions((workflow.containerEngine == 'docker') ? '--entrypoint "" --user $(id -u):$(id -g)' : '')
 
     input:
@@ -13,7 +13,7 @@ process SEGMENTATION_LSTAI {
     output:
     tuple val(meta), path("*_space-flair_seg-lst_lesion_mask.nii.gz")                   , emit: lesion_mask
     tuple val(meta), path("*_space-flair_seg-lst_annotated_lesion_mask.nii.gz")         , emit: lesion_mask_annotated, optional: true
-    tuple val(meta), path("*_lesion_stats.csv")                                         , emit: lesion_stats, optional: true
+    tuple val(meta), path("*_raw_lesion_stats.csv")                                         , emit: lesion_stats, optional: true
     tuple val(meta), path("*_annotated_lesion_stats.csv")                               , emit: lesion_stats_annotated, optional: true
     path "versions.yml"                                                                 , emit: versions
 
@@ -22,7 +22,7 @@ process SEGMENTATION_LSTAI {
 
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def device = task.ext.cpu ? "--device ${task.ext.cpu}" : "--gpus all"
+    def device = task.ext.cpu ? "--device ${task.ext.cpu}" : ""
     def threshold = task.ext.threshold ? "--threshold ${task.ext.threshold}" : ""
     def lesion_threshold = task.ext.lesion_threshold ? "--lesion_threshold ${task.ext.lesion_threshold}" : ""
     def clipping = task.ext.clipping ? "--clipping ${task.ext.clipping}" : ""
@@ -47,7 +47,7 @@ process SEGMENTATION_LSTAI {
         $fast_mode
 
     mv lst_output/space-flair_seg-lst.nii.gz ${prefix}_space-flair_seg-lst_lesion_mask.nii.gz
-    mv lst_output/lesion_stats.csv ${prefix}_lesion_stats.csv
+    mv lst_output/lesion_stats.csv ${prefix}_raw_lesion_stats.csv
 
     if [[ -f lst_output/space-flair_desc-annotated_seg-lst.nii.gz ]]; then
         mv lst_output/space-flair_desc-annotated_seg-lst.nii.gz ${prefix}_space-flair_seg-lst_annotated_lesion_mask.nii.gz

@@ -66,14 +66,6 @@ process SEGMENTATION_LSTAI {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    set +e
-    function handle_code () {
-    local code=\$?
-    ignore=( 1 )
-    [[ " \${ignore[@]} " =~ " \$code " ]] || exit \$code
-    }
-    trap 'handle_code' ERR
-
     lst -h
 
     touch ${prefix}_space-flair_seg-lst_lesion_mask.nii.gz

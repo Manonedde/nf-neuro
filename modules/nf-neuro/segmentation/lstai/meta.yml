@@ -88,28 +88,46 @@ output:
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*_space-flair_seg-lst_lesion_mask.nii.gz": {}
+      - "*_space-flair_seg-lst_lesion_mask.nii.gz":
+          type: file
+          description: Binary lesion mask in FLAIR space, produced by LST-AI.
+          pattern: "*_space-flair_seg-lst_lesion_mask.{nii, nii.gz}"
+          ontologies:
+            - edam: http://edamontology.org/format_4001 # NIFTI format
   lesion_mask_annotated:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*_space-flair_seg-lst_annotated_lesion_mask.nii.gz": {}
+      - "*_space-flair_seg-lst_annotated_lesion_mask.nii.gz":
+          type: file
+          description: Anatomically annotated lesion mask in FLAIR space, produced by LST-AI.
+          pattern: "*_space-flair_seg-lst_annotated_lesion_mask.{nii, nii.gz}"
+          ontologies:
+            - edam: http://edamontology.org/format_4001 # NIFTI format
   lesion_stats:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*_raw_lesion_stats.csv": {}
+      - "*_raw_lesion_stats.csv":
+          type: file
+          description: CSV file containing per-lesion statistics (volume, number, etc.)
+            for the binary lesion mask.
+          pattern: "*_raw_lesion_stats.csv"
   lesion_stats_annotated:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*_annotated_lesion_stats.csv": {}
+      - "*_annotated_lesion_stats.csv":
+          type: file
+          description: CSV file containing per-lesion statistics (volume, location, etc.)
+            for the anatomically annotated lesion mask.
+          pattern: "*_annotated_lesion_stats.csv"
   versions:
     - versions.yml:
         type: file
@@ -117,7 +135,6 @@ output:
         pattern: versions.yml
         ontologies:
           - edam: http://edamontology.org/format_3750 # YAML
-
 authors:
   - "@scilus"
 maintainers:

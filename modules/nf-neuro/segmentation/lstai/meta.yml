@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "segmentation_lstai"
-description: Segment white matter lesions from a T1w and FLAIR
-  image pair using LST-AI, a deep learning ensemble (registration via greedy, skull
-  stripping via HD-BET, anatomical annotation via FastSurfer). Produces a binary
-  lesion mask in FLAIR space, and, unless run in segment-only mode, an anatomically
-  annotated variant plus per-lesion statistics. Label MS lesions according to McDonald criteria.
+description: Segment white matter lesions from a T1w and FLAIR image pair using LST-AI,
+  a deep learning ensemble (registration via greedy, skull stripping via HD-BET, anatomical
+  annotation via FastSurfer). Produces a binary lesion mask in FLAIR space, and, unless
+  run in segment-only mode, an anatomically annotated variant plus per-lesion statistics.
+  Label MS lesions according to McDonald criteria.
 keywords:
   - segmentation
   - lesion
@@ -28,8 +28,8 @@ input:
     - t1:
         type: file
         description: Nifti T1w volume, not skull-stripped (unless task.ext.stripped
-          is set), used together with the FLAIR volume for lesion segmentation and
-          for the anatomical annotation of lesions.
+          is set), used together with the FLAIR volume for lesion segmentation and for
+          the anatomical annotation of lesions.
         pattern: "*.{nii,nii.gz}"
         ontologies:
           - edam: http://edamontology.org/format_4001 # NIFTI format
@@ -44,8 +44,8 @@ input:
 args:
   - cpu:
       type: string
-      description: Set if LST-AI run with "gpu" or "cpu". Must be
-        "cpu" when using the CPU-only container.
+      description: Set if LST-AI run with "gpu" or "cpu". Must be "cpu" when using the
+        CPU-only container.
       default: cpu
   - skip_stripped:
       type: boolean
@@ -59,13 +59,13 @@ args:
       default: false
   - threshold:
       type: number
-      description: Threshold applied to the ensemble's lesion probability map to
-        produce the binary mask.
+      description: Threshold applied to the ensemble's lesion probability map to produce
+        the binary mask.
       default: 0.5
   - lesion_threshold:
       type: number
-      description: Minimum lesion size in mm^3. Connected components smaller than
-        this are dropped from the binary mask.
+      description: Minimum lesion size in mm^3. Connected components smaller than this
+        are dropped from the binary mask.
       default: 0
   - clipping:
       type: string
@@ -73,14 +73,13 @@ args:
         for standardization of image intensities in pre-processing.
   - fast_mode:
       type: boolean
-      description: Run HD-BET skull-stripping with a single model rather than its
-        full ensemble, and without test-time augmentation. Faster, at some cost
-        in mask quality.
+      description: Run HD-BET skull-stripping with a single model rather than its full
+        ensemble, and without test-time augmentation. Faster, at some cost in mask quality.
       default: false
   - single_thread:
       type: boolean
-      description: If true, registration runs single-threaded. By default, LST-AI
-        uses all CPUs allocated to the task.
+      description: If true, registration runs single-threaded. By default, LST-AI uses
+        all CPUs allocated to the task.
       default: false
 output:
   lesion_mask:
@@ -89,47 +88,28 @@ output:
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*__mask_lesion.nii.gz":
-          type: file
-          description: Binary white matter lesion mask, in FLAIR space.
-          pattern: "*__mask_lesion.{nii,nii.gz}"
-          ontologies:
-            - edam: http://edamontology.org/format_4001 # NIFTI format
+      - "*_space-flair_seg-lst_lesion_mask.nii.gz": {}
   lesion_mask_annotated:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*__desc-annotated_mask_lesion.nii.gz":
-          type: file
-          description: Lesion mask with each lesion anatomically annotated (McDonald
-            criteria) using a FastSurfer parcellation of the T1w. Not produced when
-            task.ext.segment_only is set.
-          pattern: "*__desc-annotated_mask_lesion.{nii,nii.gz}"
-          ontologies:
-            - edam: http://edamontology.org/format_4001 # NIFTI format
+      - "*_space-flair_seg-lst_annotated_lesion_mask.nii.gz": {}
   lesion_stats:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*__lesion_stats.csv":
-          type: file
-          description: Per-lesion statistics (e.g. volume) for the binary segmentation.
-          pattern: "*__lesion_stats.csv"
+      - "*_raw_lesion_stats.csv": {}
   lesion_stats_annotated:
     - - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'test', single_end:false ]`
-      - "*__annotated_lesion_stats.csv":
-          type: file
-          description: Per-lesion statistics broken down by anatomical region. Not
-            produced when task.ext.segment_only is set.
-          pattern: "*__annotated_lesion_stats.csv"
+      - "*_annotated_lesion_stats.csv": {}
   versions:
     - versions.yml:
         type: file

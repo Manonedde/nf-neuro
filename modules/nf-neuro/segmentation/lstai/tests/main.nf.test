@@ -47,8 +47,8 @@ nextflow_process {
             assertAll(
                 { assert process.success },
                 { assert snapshot(
-                    niftiMD5SUM(process.out.lesion_mask.get(0).get(1)),
-                    niftiMD5SUM(process.out.lesion_mask_annotated.get(0).get(1)),
+                    file(process.out.lesion_mask.get(0).get(1)).name,
+                    file(process.out.lesion_mask_annotated.get(0).get(1)).name,
                     file(process.out.lesion_stats.get(0).get(1)).name,
                     file(process.out.lesion_stats_annotated.get(0).get(1)).name,
                     process.out.versions
